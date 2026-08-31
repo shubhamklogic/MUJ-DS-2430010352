@@ -1,0 +1,18 @@
+# Virtual Environment
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Dataset images (too large for GitHub)
+data/raw/train_images/
+data/raw/test_images/
+data/raw/*.zip
+data/raw/*.csv
+
+# Trained Model Weights (>100MB)
+models/*.pth
+
+# OS and VS Code files
+.vscode/
+.DS_Store
