@@ -45,5 +45,5 @@ Legend:
 --------------------------------------------------------------------------------
 - Baseline Scratch CNN:   Underfitting / High Variance (Spikes to 1.41 Val Loss, 71% Acc plateau)
 - Fine-Tuned ResNet50:    Good (Balanced) Fit (Train Loss: 0.4802, Val Loss: 0.5645, Test Acc: 80.73%)
-- Cross-Validation (k=5): Generalization confirmed (~80.6% Mean Validation Accuracy across folds)
+- Cross-Validation (k=5): Generalization confirmed (81.03% Mean Validation Accuracy across folds)
 ================================================================================
