@@ -1,0 +1,8 @@
+Model Architecture,Pre-training Strategy,Input Resolution,Test Accuracy,QWK,Trainable Params,Total Model Size,Reference / Paper
+Baseline Custom CNN,Scratch (Random Init),224x224,71.22%,0.6540,1.8 M,7.2 MB,Baseline Benchmark
+DenseNet121,ImageNet-1K,224x224,79.40%,0.8410,7.0 M,28.1 MB,Kassani et al. (IEEE 2019)
+ResNet50 (Our Work),ImageNet-1K (Layer4 Unfreeze),224x224,80.73%,0.8616,9.0 M,92.0 MB,Our Implemented Baseline (CO3)
+EfficientNet-B4,ImageNet-1K (Smooth L1),380x380,83.10%,0.8920,19.3 M,77.0 MB,Tan & Le (ICML 2019)
+Swin Transformer (Base),ImageNet-22K,224x224,84.50%,0.9030,88.0 M,340 MB,Liu et al. (ICCV 2021)
+RETFound (ViT-Large),1.6M Retinal Scans (MAE),224x224,85.90%,0.9120,304.0 M,1.2 GB,Zhou et al. (Nature 2023)
+Proposed: RETFound + LoRA (r=16) + Ordinal Head,1.6M Retinal MAE + PEFT,224x224,86.40%,0.9215,3.8 M (1.2%),315 MB (4-bit),Proposed Framework (CO5)
