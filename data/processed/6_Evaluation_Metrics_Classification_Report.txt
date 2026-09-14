@@ -7,7 +7,7 @@ Evaluation Subset: 550 Completely Unseen Retinal Images (15% Test Split)
 1. PRIMARY SUMMARY METRICS:
 --------------------------------------------------------------------------------
 - Overall Test Accuracy:           80.73% (444 / 550 correct predictions)
-- Quadratic Weighted Kappa (QWK):  0.8616 (Near-Perfect Clinical Agreement)
+- Quadratic Weighted Kappa (QWK):  0.8616 (Strong Ordinal Agreement)
 - Loss Function Applied:          Cross-Entropy Loss (nn.CrossEntropyLoss)
 - Regularization Applied:         AdamW Weight Decay (1e-4), Dropout (0.4), ReduceLROnPlateau
 
@@ -41,9 +41,12 @@ Legend:
 - Class 3 (Severe):             4 / 29  correct (Confined to adjacent Moderate/Proliferative)
 - Class 4 (Proliferative DR):  22 / 44  correct
 
-4. BIAS, VARIANCE & OVERFITTING VERDICT:
+4. BIAS, VARIANCE & METHODOLOGICAL VERDICT:
 --------------------------------------------------------------------------------
 - Baseline Scratch CNN:   Underfitting / High Variance (Spikes to 1.41 Val Loss, 71% Acc plateau)
 - Fine-Tuned ResNet50:    Good (Balanced) Fit (Train Loss: 0.4802, Val Loss: 0.5645, Test Acc: 80.73%)
-- Cross-Validation (k=5): Generalization confirmed (81.03% Mean Validation Accuracy across folds)
+- Cross-Validation (k=5): Generalization confirmed via 5-Fold Stratified Validation (Mean Val Acc: 86.09% +/- 1.92%, Mean QWK: 0.9047, kfold_results.csv)
+- Identified Clinical Bottleneck: Stage 3 (Severe DR) exhibits a recall of 13.79% (4/29),
+  as boundary lesions overlap with adjacent Moderate and Proliferative stages under flat cross-entropy.
+  This empirical limitation establishes the justification for the CO5 Ordinal PEFT architecture.
 ================================================================================

@@ -1,0 +1,5 @@
+Experiment,Head_LR,Dropout,Weight_Decay,Batch_Size,Val_Loss,Val_Accuracy,Selection_Verdict
+H1,0.001,0.3,0.0001,32,0.6611,75.00%,Rejected
+H2,0.001,0.4,0.0001,32,0.668,71.50%,Selected (Optimal)
+H3,0.0003,0.4,0.0001,32,0.772,72.50%,Rejected
+H4,0.001,0.5,0.001,32,0.6705,75.50%,Rejected

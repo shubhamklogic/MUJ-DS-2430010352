@@ -1,0 +1,14 @@
+MODEL CHECKPOINT INVENTORY & ARCHITECTURAL SPECIFICATIONS
+
+1. models/baseline_cnn.pth:
+   - Architecture: Custom 3-block scratch CNN (Conv2d -> BatchNorm -> ReLU -> MaxPool)
+   - Input: 224x224x3
+   - Total Parameters: 102,277 (All trainable)
+   - Training Status: Diagnosed high bias and variance plateauing at ~71% accuracy.
+
+2. models/best_finetuned_model.pth:
+   - Architecture: ResNet-50 (Pretrained ImageNet-1K Backbone)
+   - Custom Head: AdaptiveAvgPool2d -> Linear(2048, 256) -> BatchNorm -> ReLU -> Dropout(0.4) -> Linear(256, 5)
+   - Optimization: 2-Stage Progressive Fine-Tuning (Stage 1: Head only; Stage 2: Layer4 + Head)
+   - Total Parameters: 24,034,373 (Trainable: 24,034,373, Frozen: 0)
+   - Performance: Test Accuracy = 80.73%, QWK = 0.8616, Macro Specificity = 0.9483

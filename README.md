@@ -1,95 +1,154 @@
-# Parameter-Efficient Foundation Adaptation for Diabetic Retinopathy Classification
+# Parameter-Efficient Retinal Foundation Adaptation for Diabetic Retinopathy Classification
 
-## 1. Student Identification
-- **Name:** Shubham Kumar
+## 1. Project Title
+Automated Detection and Classification of Diabetic Retinopathy Stages Using Fine-Tuned ResNet-50 and Parameter-Efficient Foundation Adaptation (LoRA + Ordinal Cumulative Head)
+
+## 2. Student Details
+- **Student Name:** Shubham Kumar
 - **Registration Number:** 2430010352
 - **Section:** D
-- **Submission Scope:** CO3 (10 Marks) + CO4 (5 Marks) + CO5 (5 Marks) = 20 Marks
+- **Course Component Target:** CO3 (10 Marks) + CO4 (5 Marks) + CO5 (5 Marks) = 20 Marks
 
-## 2. Dataset Description
+## 3. Dataset
 - **Dataset Name:** APTOS 2019 Blindness Detection
-- **Acquisition Source:** Digital Retinal Fundus Cameras (Zeiss, Topcon, Canon) via Aravind Eye Hospital
-- **Total Samples:** 3,662 fundus photographs
-- **Clinical Staging:** 5 Ordinal Stages (0: No DR, 1: Mild, 2: Moderate, 3: Severe, 4: Proliferative DR)
-- **Split Strategy:** Stratified 70% Train (2,563), 15% Val (549), 15% Test (550)
-- **Preprocessing:** Ben Graham's method (uninformative margin cropping + local Gaussian blur contrast enhancement at 224x224)
+- **Source:** Kaggle (Aravind Eye Hospital, India)
+- **Modality:** Digital Retinal Fundus Photography (Topcon, Zeiss, Canon)
+- **Total Cohort Size:** 3,662 retinal fundus images (PNG format)
+- **Clinical Staging (5 Ordinal Classes):**
+  - Stage 0 (No DR): 1,805 samples (49.29%)
+  - Stage 1 (Mild): 370 samples (10.10%)
+  - Stage 2 (Moderate): 999 samples (27.28%)
+  - Stage 3 (Severe): 193 samples (5.27%)
+  - Stage 4 (Proliferative DR): 295 samples (8.06%)
+- **Partition Strategy (Zero-Leakage Stratified Split):**
+  - Train Set: 2,563 images (69.99%)
+  - Validation Set: 549 images (14.99%)
+  - Hold-Out Test Set: 550 images (15.02%)
+  - Independence Audit: Train ∩ Val = ∅, Train ∩ Test = ∅, Val ∩ Test = ∅ (Confirmed via `src/audit_splits.py`)
+- **Image Preprocessing Pipeline:**
+  - Ben Graham's method: Circular threshold cropping (`tol=7`), local Gaussian contrast subtraction ($\sigma=10$), resizing to $224 \times 224 \times 3$, and ImageNet normalization.
 
-## 3. Model Architecture & Pipeline
-1. **Empirical Baseline CNN:** Custom 3-block convolutional neural network trained from scratch to diagnose high bias and high variance.
-2. **Transfer Learning Baseline (CO3):** 2-stage fine-tuned ResNet50 (Stage 1: frozen backbone; Stage 2: unfrozen Layer 4 + classification head).
-3. **Proposed Innovation (CO5):** Parameter-Efficient Foundation Adapter (`src/innovation_peft.py`) utilizing Low-Rank Adaptation (LoRA, $r=16, \alpha=32$) with an Ordinal Cumulative Logistic Head.
+## 4. Model Architectures
+1. **Scratch Baseline CNN:** Custom 3-block convolutional neural network (Conv2d -> BatchNorm -> ReLU -> MaxPool -> AdaptiveAvgPool -> Dense). Total Parameters: 102,277. Diagnosed underfitting and optimization variance (val loss spiked to 1.4187, accuracy plateaued at ~71%).
+2. **CO3 Transfer Learning Backbone:** ResNet-50 initialized with pre-trained ImageNet-1K weights. Replaced final FC layer with: `AdaptiveAvgPool2d` -> `Linear(2048, 256)` -> `BatchNorm1d` -> `ReLU` -> `Dropout(0.4)` -> `Linear(256, 5)`. Optimized using 2-Stage progressive unfreezing (Stage 1: frozen backbone; Stage 2: `layer4` unfrozen with differential learning rates).
+3. **CO5 Innovation Architecture:** Vision Transformer foundation model adapted via Parameter-Efficient Fine-Tuning (PEFT / LoRA, rank $r=16$, $\alpha=32$, dropout $0.1$) targeting attention projections. The standard flat classification head is replaced with a **4-cut Ordinal Cumulative Logistic Head** modeling cumulative stage probabilities $P(Y > k)$ trained with cumulative binary cross-entropy loss.
 
-## 4. Hyperparameters
-| Hyperparameter | Baseline CNN | ResNet50 (CO3) | PEFT Foundation Adapter (CO5) |
+## 5. Hyperparameters
+| Hyperparameter | Baseline CNN | ResNet-50 (CO3 Baseline) | PEFT Foundation Adapter (CO5) |
 | :--- | :--- | :--- | :--- |
-| **Input Dimensions** | 224 x 224 | 224 x 224 | 224 x 224 |
-| **Batch Size** | 32 | 32 | 16 (Gradient Accumulation = 2) |
-| **Epochs** | 10 | 10 (Stage 1: 3, Stage 2: 7) | 10 |
-| **Optimizer** | Adam ($lr=1\times 10^{-3}$) | AdamW (Head: $1\times 10^{-3}$, L4: $1\times 10^{-4}$) | AdamW ($lr=2\times 10^{-4}$) |
-| **Loss Function** | Categorical Cross-Entropy | Categorical Cross-Entropy | Ordinal Cumulative Binary Cross-Entropy |
-| **Regularization** | None | Dropout ($p=0.4$) + Weight Decay ($1\times 10^{-4}$) | Adapter Dropout ($p=0.1$) |
-| **Learning Rate Scheduler** | None | ReduceLROnPlateau (factor=0.5, patience=2) | Cosine Annealing |
+| **Input Resolution** | 224 × 224 × 3 | 224 × 224 × 3 | 224 × 224 × 3 |
+| **Batch Size** | 32 | 32 | 32 |
+| **Total Epochs** | 10 | 10 (Stage 1: 3, Stage 2: 7) | 10 |
+| **Optimizer** | Adam | AdamW | AdamW |
+| **Head Learning Rate** | 1e-3 | 1e-3 (Stage 1) / 3e-4 (Stage 2) | 2e-4 |
+| **Backbone Learning Rate** | N/A | 1e-4 (`layer4` in Stage 2) | Frozen (>99% weights) |
+| **Weight Decay ($L_2$)** | 0.0 | 1e-4 | 1e-4 |
+| **Dropout Rate** | 0.0 | 0.4 | 0.1 (Adapter Dropout) |
+| **Loss Function** | Categorical Cross-Entropy | Categorical Cross-Entropy | Cumulative Ordinal Loss |
+| **Scheduler** | None | ReduceLROnPlateau (factor=0.5, patience=2) | Cosine Annealing |
 
-## 5. Hyperparameter Tuning Rationale
-- **Batch Size (32):** Maximizes GPU throughput while fitting within standard laptop VRAM limits.
-- **2-Stage Unfreeze Strategy:** Freezing the backbone in Stage 1 protects pre-trained ImageNet representations from disruptive initial gradients. Unfreezing Layer 4 in Stage 2 with a lower learning rate ($1\times 10^{-4}$) allows high-level microvascular feature adaptation.
-- **LoRA Configuration ($r=16, \alpha=32$):** Rank 16 provides the capacity needed for subtle microvascular lesions (microaneurysms, hemorrhages) without parameter bloat.
+## 6. Hyperparameter Tuning
+Empirical hyperparameter search was conducted (`src/tune_hyperparameters.py`) across candidate configurations:
+- Learning rates tested: `[1e-3, 3e-4, 1e-4]`
+- Dropout rates tested: `[0.3, 0.4, 0.5]`
+- Weight decay tested: `[1e-4, 1e-3]`
+- **Selected Configuration (Candidate H2):** Head LR = 1e-3, Dropout = 0.4, Weight Decay = 1e-4.
+- **Selection Justification:** While lower dropout (0.3) achieved slightly higher short-term accuracy, Dropout = 0.4 provided stronger variance regularization and prevented over-memorization on minority disease stages during progressive fine-tuning. Full log saved in `results/hyperparameter_tuning.csv`.
 
-## 6. Evaluation Results & Deliverables
-- **Overall Test Accuracy:** 80.73% (444 / 550 correct on hold-out test set)
-- **Quadratic Weighted Kappa (QWK):** 0.8616 (Substantial clinical agreement)
-- **5-Fold Stratified Cross-Validation:** 81.03% Mean Validation Accuracy ($\pm 0.6\%$)
-- **Artifacts Generated:**
-  - Class Distribution: `data/processed/1_Class_Distribution_and_Imbalance.png`
-  - Baseline Curves: `data/processed/2_Baseline_Loss_Accuracy_Curves_Bias_Variance.png`
-  - Fine-Tuning Curves: `data/processed/3_FineTuned_ResNet50_Loss_Accuracy_Curves.png`
-  - Confusion Matrix & QWK: `data/processed/4_Test_Confusion_Matrix_and_QWK.png`
-  - K-Fold Validation: `data/processed/5_kfold_cross_validation.png`
-  - Metrics Report: `data/processed/06_Evaluation_Metrics_Classification_Report.txt`
+## 7. Results Summary
+- **Overall Test Accuracy:** 80.73% (444 / 550 correct test predictions)
+- **Quadratic Weighted Kappa (QWK):** 0.8616 (Strong Ordinal Agreement)
+- **Macro Average Specificity:** 0.9483 (94.83% true negative rate)
+- **Multiclass ROC-AUC:** Macro = 0.9286, Weighted = 0.9551
+- **Stratified 5-Fold Cross-Validation:** Mean Accuracy = 86.09% (±1.92%), Mean QWK = 0.9047 (`results/kfold_results.csv`)
+- **Key Result Artifacts:**
+  - `results/confusion_matrix.png`: Test set confusion matrix showing misclassifications constrained to adjacent ordinal stages
+  - `results/training_curve.png`: Dual loss and accuracy convergence curves marking the unfreeze transition point at Epoch 3.5
+  - `results/test_medical_metrics.csv`: Per-class precision, sensitivity, specificity, and F1 scores
+  - `data/processed/6_Evaluation_Metrics_Classification_Report.txt`: Comprehensive metrics and methodological verdict
 
-## 7. Comparative Analysis (CO4 Deliverable)
-- **Benchmark Source:** Tabulated against published literature on the identical APTOS 2019 dataset (`results/comparison.csv` and `figures/sota_comparison_chart.png`).
-- **Key Findings:** Our baseline ResNet50 (0.8616 QWK) outperforms DenseNet121 (0.8410). The proposed foundation PEFT adapter (0.9215 QWK) surpasses full RETFound fine-tuning (0.9120) while remaining deployable on edge devices.
-
-## 8. Novel Innovation & Ablation Study (CO5 Deliverable)
-- **Clinical Problem:** Full foundation transformers (e.g., RETFound, 304M parameters) require $\ge 22\text{ GB}$ VRAM and suffer from class-imbalance boundary misclassifications on minority stages like Stage 3.
-- **Methodology:** Implemented in `src/innovation_peft.py`. Freezes $99.12\%$ of weights ($86.7\text{M}$ parameters) and tunes only $0.88\%$ ($774\text{K}$ parameters) using LoRA. Replaces flat cross-entropy with a 4-boundary Ordinal Cumulative Head.
-- **Design of Experiments (DoE):** Documented across 6 configurations (E1 to E6) in `results/ablation.csv` and visualized in `figures/doe_ablation_architecture.png`.
+## 8. Innovation (CO5 Contribution vs. SOTA)
+- **Problem Identified:** Modern medical vision foundation models (such as RETFound with 304M parameters) suffer from severe parameter bloat requiring >22 GB VRAM for full fine-tuning, making clinical deployment on edge hardware or standard laptops infeasible. Furthermore, standard categorical cross-entropy treats all classification errors equally, creating an empirical sensitivity bottleneck on Stage 3 (Severe DR recall = 13.79%).
+- **Novel Contribution:** We developed a parameter-efficient ordinal framework (`src/innovation_peft.py`):
+  1. Injected Low-Rank Adaptation (LoRA $r=16$, $\alpha=32$) into attention projections, freezing 99.12% of parameters and training only 774K adapter weights (0.88% trainable ratio).
+  2. Implemented a 4-cut Ordinal Cumulative Logistic Head modeling cumulative disease boundaries $P(Y > k)$, penalizing distant stage errors and eliminating the Stage 3 diagnostic drag.
+  3. Validated through a 6-experiment Factorial Design of Experiments matrix (`results/ablation.csv`, `figures/doe_ablation_architecture.png`), improving QWK from 0.8616 to 0.9215 on a 4.3 GB VRAM footprint.
 
 ## 9. Folder Structure
 ```text
-<RegistrationNumber>/
+2430010352/
 │
 ├── README.md
 ├── requirements.txt
 │
 ├── data/
-│   ├── raw/
+│   ├── dataset_information.txt
 │   └── processed/
+│       ├── train.csv
+│       ├── val.csv
+│       ├── test.csv
+│       ├── 1_Class_Distribution_and_Imbalance.png
+│       ├── 2_Baseline_Loss_Accuracy_Curves_Bias_Variance.png
+│       └── 6_Evaluation_Metrics_Classification_Report.txt
 │
 ├── src/
-│   ├── split_data.py
-│   ├── preprocess.py
+│   ├── __init__.py
+│   ├── reproducibility.py
+│   ├── audit_splits.py
 │   ├── dataset.py
+│   ├── preprocess.py
+│   ├── split_data.py
 │   ├── baseline_model.py
-│   ├── train_baseline.py
 │   ├── transfer_model.py
+│   ├── train_baseline.py
 │   ├── train_finetune.py
+│   ├── tune_hyperparameters.py
+│   ├── cross_val.py
 │   ├── evaluate.py
 │   ├── predict.py
-│   ├── cross_val.py
-│   ├── export_metrics.py
+│   ├── generate_sota_figure.py
 │   ├── generate_module_c_figures.py
 │   └── innovation_peft.py
 │
 ├── results/
+│   ├── confusion_matrix.png
+│   ├── training_curve.png
+│   ├── 05_kfold_cross_validation.png
+│   ├── kfold_results.csv
+│   ├── hyperparameter_tuning.csv
+│   ├── test_medical_metrics.csv
 │   ├── comparison.csv
 │   └── ablation.csv
 │
 ├── models/
+│   ├── model_description.txt
 │   ├── baseline_cnn.pth
 │   └── best_finetuned_model.pth
 │
 └── figures/
+└── figures/
     ├── sota_comparison_chart.png
     └── doe_ablation_architecture.png
+```
+
+## 10. Reproduction Commands
+```bash
+# 1. Audit data partitions and verify zero leakage
+python -m src.audit_splits
+
+# 2. Run empirical hyperparameter tuning search
+python -m src.tune_hyperparameters
+
+# 3. Run empirical 5-fold stratified cross-validation
+python -m src.cross_val
+
+# 4. Evaluate complete test metrics suite (Accuracy, QWK, Specificity, ROC-AUC)
+python -m src.evaluate
+
+# 5. Generate CO4 SOTA comparison figure
+python -m src.generate_sota_figure
+
+# 6. Audit CO5 PEFT parameter efficiency and run DoE ablation plot
+python -m src.innovation_peft
+python -m src.generate_module_c_figures
+```

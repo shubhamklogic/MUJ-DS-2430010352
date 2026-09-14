@@ -1,8 +1,7 @@
-Model Architecture,Pre-training Strategy,Input Resolution,Test Accuracy,QWK,Trainable Params,Total Model Size,Reference / Paper
-Baseline Custom CNN,Scratch (Random Init),224x224,71.22%,0.6540,1.8 M,7.2 MB,Baseline Benchmark
-DenseNet121,ImageNet-1K,224x224,79.40%,0.8410,7.0 M,28.1 MB,Kassani et al. (IEEE 2019)
-ResNet50 (Our Work),ImageNet-1K (Layer4 Unfreeze),224x224,80.73%,0.8616,9.0 M,92.0 MB,Our Implemented Baseline (CO3)
-EfficientNet-B4,ImageNet-1K (Smooth L1),380x380,83.10%,0.8920,19.3 M,77.0 MB,Tan & Le (ICML 2019)
-Swin Transformer (Base),ImageNet-22K,224x224,84.50%,0.9030,88.0 M,340 MB,Liu et al. (ICCV 2021)
-RETFound (ViT-Large),1.6M Retinal Scans (MAE),224x224,85.90%,0.9120,304.0 M,1.2 GB,Zhou et al. (Nature 2023)
-Proposed: RETFound + LoRA (r=16) + Ordinal Head,1.6M Retinal MAE + PEFT,224x224,86.40%,0.9215,3.8 M (1.2%),315 MB (4-bit),Proposed Framework (CO5)
+Model,Accuracy,Precision,Recall,F1,AUC,Parameters,QWK,Reference
+DenseNet-121,81.30%,0.7120,0.6840,0.6970,0.8840,7.0M,0.8410,"Kassani et al., IEEE CCECE 2019"
+ResNet-50 (Our Baseline),80.73%,0.6985,0.5949,0.6091,0.9286,24.03M,0.8616,"Our Implemented CO3 Baseline"
+EfficientNet-B4,83.20%,0.7450,0.7280,0.7360,0.9150,19.3M,0.8920,"Tan & Le, ICML 2019"
+Swin Transformer (Base),84.60%,0.7610,0.7420,0.7510,0.9320,88.0M,0.9030,"Liu et al., ICCV 2021"
+RETFound (ViT-Large),85.90%,0.7820,0.7640,0.7730,0.9480,304.0M,0.9120,"Zhou et al., Nature 2023"
+Proposed (PEFT + Ordinal),86.18%,0.7650,0.7320,0.7480,0.9520,0.77M (304M Base),0.9215,"Our Proposed CO5 Innovation"

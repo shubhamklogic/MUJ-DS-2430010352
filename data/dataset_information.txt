@@ -1,0 +1,15 @@
+Dataset Name: APTOS 2019 Blindness Detection
+Source: Kaggle (Aravind Eye Hospital, India)
+Modality: Digital Retinal Fundus Photography (Topcon, Zeiss, Canon)
+Total Samples: 3,662 retinal images (PNG format)
+Classes: 5 Ordinal Stages
+  - 0: No DR (1,805 samples, 49.29%)
+  - 1: Mild (370 samples, 10.10%)
+  - 2: Moderate (999 samples, 27.28%)
+  - 3: Severe (193 samples, 5.27%)
+  - 4: Proliferative DR (295 samples, 8.06%)
+Partition Strategy: Stratified 70/15/15 Split
+  - Train: 2,563 images (69.99%)
+  - Validation: 549 images (14.99%)
+  - Test: 550 images (15.02%)
+Preprocessing: Ben Graham's method (border removal, local Gaussian contrast subtraction, 224x224 resize)
