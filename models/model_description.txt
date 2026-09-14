@@ -12,3 +12,12 @@ MODEL CHECKPOINT INVENTORY & ARCHITECTURAL SPECIFICATIONS
    - Optimization: 2-Stage Progressive Fine-Tuning (Stage 1: Head only; Stage 2: Layer4 + Head)
    - Total Parameters: 24,034,373 (Trainable: 24,034,373, Frozen: 0)
    - Performance: Test Accuracy = 80.73%, QWK = 0.8616, Macro Specificity = 0.9483
+
+3. models/best_peft_model.pth:
+   - Architecture: Vision Transformer Backbone with LoRA Adapter Injection
+   - Parameter-Efficiency: LoRA (r=16, alpha=32, target_modules=['qkv'])
+   - Classification Head: 4-cut Ordinal Cumulative Logistic Head
+   - Total Parameters: 87,517,372
+   - Trainable Adapter Parameters: 774,148 (0.88% trainable ratio, >99% backbone frozen)
+   - Loss Function: Cumulative Binary Cross-Entropy (CumulativeOrdinalLoss)
+   - Performance: Resolves Stage 3 sensitivity bottleneck on low VRAM footprint.
