@@ -8,7 +8,7 @@ import numpy as np
 
 def run_consistency_audit():
     print("=" * 70)
-    print("       MODULE 6: FINAL SCIENTIFIC CONSISTENCY & CLAIM AUDIT")
+    print("       SYSTEM INTEGRITY & SCIENTIFIC CONSISTENCY AUDIT")
     print("=" * 70)
     
     errors = []
@@ -42,7 +42,7 @@ def run_consistency_audit():
         print(f"      -> Test Support verified: {test_support} samples.")
 
     # 3. Audit CO4 SOTA Comparison Table
-    print("\n[3/5] Auditing CO4 SOTA Benchmarks (results/comparison.csv)...")
+    print("\n[3/5] Auditing Published SOTA Benchmarks (results/comparison.csv)...")
     comp_path = "results/comparison.csv"
     if not os.path.exists(comp_path):
         errors.append(f"Missing {comp_path}")
@@ -65,7 +65,7 @@ def run_consistency_audit():
         print(f"      -> {len(c_df)} benchmark models verified against literature.")
 
     # 4. Audit CO5 Ablation Matrix
-    print("\n[4/5] Auditing CO5 DoE Ablation Matrix (results/ablation.csv)...")
+    print("\n[4/5] Auditing Factorial Ablation Matrix (results/ablation.csv)...")
     abl_path = "results/ablation.csv"
     if not os.path.exists(abl_path):
         errors.append(f"Missing {abl_path}")

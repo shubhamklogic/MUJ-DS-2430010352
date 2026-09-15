@@ -57,7 +57,7 @@ def generate_peft_training_curves():
     out_path = "figures/peft_training_curves.png"
     plt.savefig(out_path, dpi=300)
     plt.close()
-    print(f"[CO5 Engine] Successfully saved high-clarity curve to: '{out_path}'")
+    print(f"[Visualization Engine] Successfully saved high-clarity curve to: '{out_path}'")
 
 if __name__ == "__main__":
     generate_peft_training_curves()

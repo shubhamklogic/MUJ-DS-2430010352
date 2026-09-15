@@ -7,7 +7,6 @@ Automated Detection and Classification of Diabetic Retinopathy Stages Using Fine
 - **Student Name:** Shubham Kumar
 - **Registration Number:** 2430010352
 - **Section:** D
-- **Course Component Target:** CO3 (10 Marks) + CO4 (5 Marks) + CO5 (5 Marks) = 20 Marks
 
 ## 3. Dataset
 - **Dataset Name:** APTOS 2019 Blindness Detection
@@ -30,11 +29,11 @@ Automated Detection and Classification of Diabetic Retinopathy Stages Using Fine
 
 ## 4. Model Architectures
 1. **Scratch Baseline CNN:** Custom 3-block convolutional neural network (Conv2d -> BatchNorm -> ReLU -> MaxPool -> AdaptiveAvgPool -> Dense). Total Parameters: 102,277. Diagnosed underfitting and optimization variance (val loss spiked to 1.4187, accuracy plateaued at ~71%).
-2. **CO3 Transfer Learning Backbone:** ResNet-50 initialized with pre-trained ImageNet-1K weights. Replaced final FC layer with: `AdaptiveAvgPool2d` -> `Linear(2048, 256)` -> `BatchNorm1d` -> `ReLU` -> `Dropout(0.4)` -> `Linear(256, 5)`. Optimized using 2-Stage progressive unfreezing (Stage 1: frozen backbone; Stage 2: `layer4` unfrozen with differential learning rates).
-3. **CO5 Innovation Architecture:** Vision Transformer foundation model adapted via Parameter-Efficient Fine-Tuning (PEFT / LoRA, rank $r=16$, $\alpha=32$, dropout $0.1$) targeting attention projections. The standard flat classification head is replaced with a **4-cut Ordinal Cumulative Logistic Head** modeling cumulative stage probabilities $P(Y > k)$ trained with cumulative binary cross-entropy loss.
+2. **Transfer Learning Backbone:** ResNet-50 initialized with pre-trained ImageNet-1K weights. Replaced final FC layer with: `AdaptiveAvgPool2d` -> `Linear(2048, 256)` -> `BatchNorm1d` -> `ReLU` -> `Dropout(0.4)` -> `Linear(256, 5)`. Optimized using 2-Stage progressive unfreezing (Stage 1: frozen backbone; Stage 2: `layer4` unfrozen with differential learning rates).
+3. **Parameter-Efficient Foundation Architecture:** Vision Transformer foundation model adapted via Parameter-Efficient Fine-Tuning (PEFT / LoRA, rank $r=16$, $\alpha=32$, dropout $0.1$) targeting attention projections. The standard flat classification head is replaced with a **4-cut Ordinal Cumulative Logistic Head** modeling cumulative stage probabilities $P(Y > k)$ trained with cumulative binary cross-entropy loss.
 
 ## 5. Hyperparameters
-| Hyperparameter | Baseline CNN | ResNet-50 (CO3 Baseline) | PEFT Foundation Adapter (CO5) |
+| Hyperparameter | Baseline CNN | ResNet-50 (Fine-Tuned Baseline) | PEFT Foundation Adapter (Proposed) |
 | :--- | :--- | :--- | :--- |
 | **Input Resolution** | 224 × 224 × 3 | 224 × 224 × 3 | 224 × 224 × 3 |
 | **Batch Size** | 32 | 32 | 16 |
@@ -67,7 +66,7 @@ Empirical hyperparameter search was conducted (`src/tune_hyperparameters.py`) ac
   - `results/test_medical_metrics.csv`: Per-class precision, sensitivity, specificity, and F1 scores
   - `data/processed/6_Evaluation_Metrics_Classification_Report.txt`: Comprehensive metrics and methodological verdict
 
-## 8. Innovation (CO5 Contribution vs. SOTA)
+## 8. Architectural Innovation & Ablation Analysis
 - **Problem Identified:** Modern medical vision foundation models (such as RETFound with 304M parameters) suffer from severe parameter bloat requiring >22 GB VRAM for full fine-tuning, making clinical deployment on edge hardware or standard laptops infeasible. Furthermore, standard categorical cross-entropy treats all classification errors equally, creating an empirical sensitivity bottleneck on Stage 3 (Severe DR recall = 13.79%).
 - **Novel Contribution:** We developed a parameter-efficient ordinal framework (`src/innovation_peft.py`):
   1. Injected Low-Rank Adaptation (LoRA $r=16$, $\alpha=32$) into attention projections, freezing 99.12% of parameters and training only 774K adapter weights (0.88% trainable ratio).
@@ -75,7 +74,7 @@ Empirical hyperparameter search was conducted (`src/tune_hyperparameters.py`) ac
   3. Validated empirically through dedicated training (`src/train_peft.py`, saved checkpoint `models/best_peft_model.pth`) and a 6-experiment Factorial Design of Experiments matrix (`results/ablation.csv`, `figures/doe_ablation_architecture.png`), achieving a peak theoretical QWK of 0.9215 on a 4.3 GB VRAM footprint.
 
 ### Benchmark Protocol Transparency & Literature Grounding
-- **In-Domain Evaluated Models:** Both our Baseline ResNet-50 (CO3) and proposed PEFT Foundation Architecture (CO5) were trained and evaluated directly on our verified zero-leakage stratified split (Train: 2,563; Val: 549; Test: 550) on local consumer hardware.
+- **In-Domain Evaluated Models:** Both our Baseline ResNet-50 and proposed PEFT Foundation Architecture were trained and evaluated directly on our verified zero-leakage stratified split (Train: 2,563; Val: 549; Test: 550) on local consumer hardware.
 - **Published SOTA Baselines:** External benchmark numbers for DenseNet-121 (Kassani et al., 2019), EfficientNet-B4 (Tan & Le, 2019), Swin Transformer (Liu et al., 2021), and RETFound (Zhou et al., Nature 2023) reflect reported evaluation performances on the identical APTOS 2019 dataset cited directly. Their cross-validation and test partitions vary per respective published literature protocols.
 
 ## 9. Folder Structure
@@ -153,10 +152,10 @@ python -m src.cross_val
 # 4. Evaluate complete test metrics suite (Accuracy, QWK, Specificity, ROC-AUC)
 python -m src.evaluate
 
-# 5. Generate CO4 SOTA comparison figure
+# 5. Generate SOTA comparison figure
 python -m src.generate_sota_figure
 
-# 6. Audit CO5 PEFT parameter efficiency and run DoE ablation plot
+# 6. Audit PEFT parameter efficiency and run DoE ablation plot
 python -m src.innovation_peft
 python -m src.generate_module_c_figures
 

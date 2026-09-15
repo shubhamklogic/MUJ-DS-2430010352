@@ -73,7 +73,7 @@ class RetinopathyFoundationPEFT(nn.Module):
 
 def audit_peft_efficiency():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"[CO5 Engine] Auditing Parameter-Efficient Architecture on: {device}")
+    print(f"[PEFT Foundation Engine] Auditing Parameter-Efficient Architecture on: {device}")
     
     model = RetinopathyFoundationPEFT(num_classes=5, lora_r=16, lora_alpha=32).to(device)
     
@@ -83,7 +83,7 @@ def audit_peft_efficiency():
     trainable_pct = (trainable_params / total_params) * 100
     
     print("=" * 65)
-    print("       PARAMETER-EFFICIENT FOUNDATION AUDIT (CO5 INNOVATION)")
+    print("       PARAMETER-EFFICIENT FOUNDATION ARCHITECTURE AUDIT")
     print("=" * 65)
     print(f"Total Model Parameters:       {total_params:,}")
     print(f"Trainable Adapter Parameters: {trainable_params:,}")
@@ -104,7 +104,7 @@ def audit_peft_efficiency():
     print(f"Calculated Ordinal Loss:        {loss.item():.4f}")
     print(f"Predicted Discrete Stages:      {predicted_stages.cpu().numpy().tolist()}")
     print("=" * 65)
-    print("[CO5 Audit] PEFT Foundation Adapter script verified successfully!\n")
+    print("[Architecture Audit] PEFT Foundation Adapter verified successfully!\n")
 
 if __name__ == "__main__":
     audit_peft_efficiency()

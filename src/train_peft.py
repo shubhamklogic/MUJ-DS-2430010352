@@ -68,7 +68,7 @@ def main():
     # Enforce deterministic seeding
     set_seed(42)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"[CO5 PEFT Engine] Initializing Training Loop on: {device}")
+    print(f"[Training Engine] Initializing PEFT Training Loop on: {device}")
 
     # Hyperparameters
     BATCH_SIZE = 16
