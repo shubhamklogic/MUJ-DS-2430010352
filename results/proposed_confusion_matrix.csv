@@ -1,0 +1,6 @@
+,No DR (0),Mild (1),Moderate (2),Severe (3),Proliferative (4)
+No DR (0),247,6,18,0,0
+Mild (1),5,3,42,6,0
+Moderate (2),8,0,94,42,6
+Severe (3),0,0,13,12,4
+Proliferative (4),2,0,23,16,3

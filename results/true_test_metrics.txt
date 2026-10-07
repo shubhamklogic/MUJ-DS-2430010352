@@ -1,0 +1,22 @@
+Test Accuracy: 0.7855
+Test QWK: 0.8998
+
+Confusion Matrix:
+[[266   4   1   0   0]
+ [  8  18  30   0   0]
+ [  2   5 116  24   3]
+ [  0   0   6  10  13]
+ [  1   0  12   9  22]]
+
+Report:
+               precision    recall  f1-score   support
+
+        No DR     0.9603    0.9815    0.9708       271
+         Mild     0.6667    0.3214    0.4337        56
+     Moderate     0.7030    0.7733    0.7365       150
+       Severe     0.2326    0.3448    0.2778        29
+Proliferative     0.5789    0.5000    0.5366        44
+
+     accuracy                         0.7855       550
+    macro avg     0.6283    0.5842    0.5911       550
+ weighted avg     0.7914    0.7855    0.7809       550

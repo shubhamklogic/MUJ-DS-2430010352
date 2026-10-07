@@ -15,40 +15,46 @@ def generate_sota_comparison_plot():
         
     df = pd.read_csv(csv_path)
     
-    models = df['Model'].tolist()
-    qwk_scores = df['QWK'].astype(float).tolist()
+    model_col = 'Model Architecture' if 'Model Architecture' in df.columns else 'Model'
+    param_col = 'Trainable Params' if 'Trainable Params' in df.columns else ('Parameters' if 'Parameters' in df.columns else None)
+    qwk_col = 'QWK' if 'QWK' in df.columns else 'QWK_Metric'
     
-    # Visual color scheme:
-    # Muted grey for literature baselines, Blue for our CO3 baseline, Green for proposed innovation
+    df['QWK_float'] = df[qwk_col].astype(str).str.replace('%', '').str.strip().astype(float)
+    df = df.sort_values(by='QWK_float', ascending=True).reset_index(drop=True)
+    
+    models = df[model_col].tolist()
+    qwk_scores = df['QWK_float'].tolist()
+    params = df[param_col].tolist() if param_col else [''] * len(models)
+    
     colors = []
     for m in models:
-        if "Baseline" in m:
-            colors.append('#1f77b4')  # Blue (CO3)
-        elif "Proposed" in m:
-            colors.append('#2ca02c')  # Green (CO5)
+        if "Baseline" in str(m):
+            colors.append('#1f77b4')  # Blue for baseline
+        elif "Proposed" in str(m) or "PEFT" in str(m):
+            colors.append('#2ca02c')  # Green for proposed
         else:
-            colors.append('#7f7f7f')  # Muted grey (Published literature)
+            colors.append('#7f7f7f')  # Grey for literature
             
-    plt.figure(figsize=(10, 5.2))
+    plt.figure(figsize=(11, 5.5))
     bars = plt.barh(models, qwk_scores, color=colors, edgecolor='black', height=0.6)
     
-    plt.xlim(0.65, 1.0)
+    plt.xlim(0.80, 0.98)
     plt.xlabel('Quadratic Weighted Kappa (QWK) on APTOS 2019', fontsize=11, fontweight='bold')
-    plt.title('State-of-the-Art (SOTA) Comparative Benchmark (APTOS 2019)', fontsize=12, fontweight='bold')
+    plt.title('State-of-the-Art (SOTA) Comparative Benchmark on APTOS 2019', fontsize=12, fontweight='bold')
     plt.grid(axis='x', linestyle='--', alpha=0.6)
     
-    # Add numerical labels beside bars
-    for bar, score in zip(bars, qwk_scores):
-        plt.text(score + 0.006, bar.get_y() + bar.get_height() / 2,
-                 f"{score:.4f}",
-                 va='center', ha='left', fontsize=10, fontweight='bold')
+    for bar, score, p in zip(bars, qwk_scores, params):
+        label = f"{score:.4f}  ({p})" if str(p).strip() else f"{score:.4f}"
+        plt.text(score + 0.002, bar.get_y() + bar.get_height() / 2,
+                 label,
+                 va='center', ha='left', fontsize=9.5, fontweight='bold')
                  
     plt.tight_layout()
     os.makedirs("figures", exist_ok=True)
     out_path = "figures/sota_comparison_chart.png"
     plt.savefig(out_path, dpi=300)
     plt.close()
-    print(f"[CO4 Engine] Successfully generated benchmark chart: '{out_path}'")
+    print(f"[Engine] Successfully updated benchmark chart: '{out_path}'")
 
 if __name__ == "__main__":
     generate_sota_comparison_plot()

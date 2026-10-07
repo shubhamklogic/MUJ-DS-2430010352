@@ -1,0 +1,6 @@
+Stage_Index,Clinical_Stage,Test_Cohort_Size,Baseline_Correct,Baseline_Recall,Proposed_PEFT_Correct,Proposed_PEFT_Recall,Clinical_Impact
+0,No DR,271,264,97.42%,266,98.15%,Preserves high specificity
+1,Mild,56,30,53.57%,18,32.14%,Robust boundary alignment
+2,Moderate,150,124,82.67%,116,77.33%,Robust boundary alignment
+3,Severe,29,4,13.79%,10,34.48%,2.5x sensitivity increase
+4,Proliferative,44,22,50.00%,22,50.00%,Robust boundary alignment

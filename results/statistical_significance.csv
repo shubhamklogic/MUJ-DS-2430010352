@@ -1,0 +1,3 @@
+Model,Accuracy,QWK,Macro_F1,Trainable_Params,McNemar_p_val
+ResNet-50 (Baseline),80.76% [77.63% - 84.18%],0.8619 [0.8242 - 0.8947],0.6069 [0.5473 - 0.6656],24.03M (100%),Reference
+Proposed PEFT Framework,78.51% [75.09% - 82.18%],0.8996 [0.8733 - 0.9223],0.5885 [0.5355 - 0.6416],0.77M (0.88%),2.2446e-01

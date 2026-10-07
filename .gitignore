@@ -1,18 +1,22 @@
 # Virtual Environment
 venv/
-.venv/
+ENV/
+env/
+
+# Python Bytecode
 __pycache__/
-*.pyc
+*.py[cod]
 
-# Dataset images (too large for GitHub)
-data/raw/train_images/
-data/raw/test_images/
-data/raw/*.zip
-data/raw/*.csv
+# Raw & Massive Medical Datasets (>9 GB)
+data/raw/
+*.zip
 
-# Trained Model Weights (>100MB)
+# Large PyTorch Model Weights (>100 MB GitHub Limit)
+*.pth
+*.pt
 models/*.pth
+models/*.pt
 
-# OS and VS Code files
-.vscode/
+# OS / Temporary Files
 .DS_Store
+Thumbs.db

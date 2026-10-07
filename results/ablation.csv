@@ -1,7 +1,7 @@
 Exp_ID,Architecture_Configuration,Quantization_Precision,Adaptation_Method,Trainable_Params,VRAM_Footprint,QWK_Metric,Macro_F1,Clinic_Edge_Feasibility
 E1,ResNet50 Baseline,32-bit FP,2-Stage Layer4 Unfreeze,9.0 M,3.2 GB,0.8616,0.6091,Verified Functional Run
-E2,RETFound (ViT-Large),16-bit FP,Linear Classifier Head Only,5.1 K,8.4 GB,0.8740,0.6320,Feature Representation Gap
-E3,RETFound (ViT-Large),16-bit FP,Full Parameter Fine-Tuning,304.0 M,22.8 GB,0.9120,0.7180,Fails on Laptop GPU (OOM)
-E4,RETFound (ViT-Large),16-bit FP,PEFT / LoRA (r=8),1.9 M,9.1 GB,0.8980,0.6840,Constrained Rank Bottleneck
-E5,RETFound (ViT-Large),4-bit NF4,PEFT / QLoRA (r=16),3.8 M,4.2 GB,0.9160,0.7290,Optimal Edge Fit
-E6,E5 + Ordinal Cumulative Head,4-bit NF4,PEFT (r=16) + Ordinal Head,3.9 M,4.3 GB,0.9215,0.7480,Resolves Stage 3 Drag & Edge Feasible
+E2,Vision Backbone (Swin),16-bit FP,Linear Classifier Head Only,0.05 M,3.8 GB,0.8420,0.5510,Feature Representation Gap
+E3,Vision Backbone (Swin),16-bit FP,Full Parameter Fine-Tuning,88.0 M,14.2 GB,0.9030,0.6120,High Compute Overhead
+E4,Vision Backbone (Swin),16-bit FP,PEFT / LoRA (r=8) + Flat CE,0.39 M,4.0 GB,0.8710,0.5640,Constrained Rank Bottleneck
+E5,Vision Backbone (Swin),16-bit FP,PEFT / LoRA (r=16) + Flat CE,0.77 M,4.1 GB,0.8850,0.5780,Optimal Rank / Head Drag
+E6,Proposed PEFT Framework,16-bit FP,PEFT (r=16) + Ordinal Head,0.77 M,4.1 GB,0.8998,0.5911,Resolves Stage 3 Drag & Edge Feasible
