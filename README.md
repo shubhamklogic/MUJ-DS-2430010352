@@ -1,4 +1,4 @@
-# Parameter-Efficient Retinal Foundation Adaptation for Diabetic Retinopathy Classification
+# Parameter-Efficient Foundation Adaptation with Ordinal Cumulative Boundaries for Diabetic Retinopathy Staging
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c.svg)](https://pytorch.org/)
@@ -11,6 +11,16 @@ An empirical, research-grade deep learning framework for multi-stage Diabetic Re
 The framework achieves near-foundation agreement (**0.8998 Quadratic Weighted Kappa**) on the benchmark **APTOS 2019** dataset while tuning only **0.77M parameters (0.88%)**, operating within a consumer edge budget (<5 GB VRAM) and resolving the clinical sensitivity bottleneck on high-risk severe disease.
 
 ---
+
+### Student & Project Metadata
+
+| Field | Details |
+| :--- | :--- |
+| **Student Name** | Shubham Kumar |
+| **Registration Number** | 2430010352 |
+| **Section** | D |
+| **Project Title** | Parameter-Efficient Foundation Adaptation with Ordinal Cumulative Boundaries for Diabetic Retinopathy Staging |
+| **GitHub Username** | [@shubhamklogic](https://github.com/shubhamklogic) |
 
 ## Table of Contents
 
