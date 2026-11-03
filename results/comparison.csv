@@ -1,7 +1,7 @@
-Model Architecture,Trainable Params,Hardware Footprint,Accuracy,QWK
-DenseNet-121,7.0M (100%),Standard Workstation,81.30%,0.8410
-ResNet-50 (Baseline),24.03M (100%),Standard Workstation,80.73%,0.8616
-Proposed PEFT Framework,0.77M (0.88%),Edge Laptop (<5 GB),78.55%,0.8998
-EfficientNet-B4,19.3M (100%),Standard Workstation,83.20%,0.8920
-Swin Transformer (Base),88.0M (100%),Server GPU,84.60%,0.9030
-RETFound Foundation,304.0M (100%),Server GPU (>22 GB),85.90%,0.9120
+Model,Evaluation_Tier,Trainable_Params,Accuracy,QWK,Source_Reference
+ResNet-50 (Baseline),In-House Controlled (n=550),24.03M (100%),80.73%,0.8616,In-House Controlled Run
+Proposed PEFT Framework,In-House Controlled (n=550),0.77M (0.88%),78.55%,0.8998,This Work (Exp E6)
+Swin Transformer (Base),In-House Controlled (n=550),88.0M (100%),84.60%,0.9030,In-House Full Fine-Tune (Exp E3)
+DenseNet-121,Literature Reference,7.0M (100%),81.30%,0.8410,"Kassani et al., ICMLA 2019"
+EfficientNet-B4,Literature Reference,19.3M (100%),83.20%,0.8920,"Tan & Le, ICML 2019"
+RETFound (ViT-Large),Literature Reference,304.0M (100%),85.90%,0.9120,"Zhou et al., Nature 2023"

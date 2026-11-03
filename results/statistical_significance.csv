@@ -1,3 +1,7 @@
-Model,Accuracy,QWK,Macro_F1,Trainable_Params,McNemar_p_val
-ResNet-50 (Baseline),80.76% [77.63% - 84.18%],0.8619 [0.8242 - 0.8947],0.6069 [0.5473 - 0.6656],24.03M (100%),Reference
-Proposed PEFT Framework,78.51% [75.09% - 82.18%],0.8996 [0.8733 - 0.9223],0.5885 [0.5355 - 0.6416],0.77M (0.88%),2.2446e-01
+metric,baseline_resnet50,proposed_peft,delta,p_value_or_ci
+test_accuracy,80.73%,78.55%,-2.18%,[-5.38% to +1.02%]
+quadratic_weighted_kappa,0.8616,0.8998,+0.0382,[-0.0122 to +0.0685]
+macro_f1,0.6091,0.5911,-0.0180,[-0.0451 to +0.0210]
+trainable_parameters,24.03M,0.77M,-96.8%,N/A
+mcnemar_contingency,"b=47, c=35",chi2=1.4756,df=1,p=0.2245
+bootstrap_iterations,1000,1000,N/A,95% Empirical CI
