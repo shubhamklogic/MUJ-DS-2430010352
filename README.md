@@ -18,8 +18,10 @@ The framework achieves competitive diagnostic concordance (**0.8998 Quadratic We
 | :--- | :--- |
 | **Student Name** | Shubham Kumar |
 | **Registration Number** | 2430010352 |
-| **Section** | D |
+| **Branch** | Data Science & Computer Applications |
+| **Section / Batch** | Section D / Batch 1 |
 | **Project Title** | Parameter-Efficient Foundation Adaptation with Ordinal Cumulative Boundaries for Diabetic Retinopathy Staging |
+| **GitHub Username** | [@shubhamklogic](https://github.com/shubhamklogic) |
 | **GitHub Repository** | [MUJ-DS-2430010352](https://github.com/shubhamklogic/MUJ-DS-2430010352) |
 
 ---
@@ -144,7 +146,7 @@ Evaluations were performed on the 550 unseen hold-out test images using `models/
 ## 8. Factorial Design of Experiments (DoE) Ablation Study
 
 | Exp ID | Architecture Configuration | Adaptation Method | Trainable Params | VRAM | Test QWK | Macro $F_1$ | Empirical Takeaway |
-| :---: | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
+| :---: | :--- | :--- | :---: | :---: | :---: | :--- |
 | **E1** | ResNet-50 Baseline | 2-Stage Layer4 Unfreeze | 9.0M | 3.2 GB | 0.8616 | 0.6091 | Severe DR recall bottleneck (13.79%) |
 | **E2** | Swin Transformer Backbone | Linear Head Probe Only | 0.005M | 3.8 GB | 0.8420 | 0.5510 | Underfitting; frozen features lack domain adaptation |
 | **E3** | Swin Transformer Backbone | Full End-to-End Fine-Tune | 88.0M | 14.2 GB | 0.9030 | 0.6120 | Server-grade compute overhead |
@@ -158,3 +160,124 @@ Evaluations were performed on the 550 unseen hold-out test images using `models/
 
 Attribution maps are extracted across the final normalization layer (`backbone.base_model.model.layers.3.blocks.1.norm2`):
 * `figures/xai_gradcam_stages.png`: Demonstrates focal lesion alignment across microaneurysms (Stage 1), hard exudates (Stage 2), blot hemorrhages (Stage 3), and neovascularization (Stage 4), confirming clinical plausibility.
+
+---
+
+## 10. Repository Folder Structure
+
+```text
+MUJ-DS-2430010352/
+│
+├── README.md                                  # Complete research documentation & metadata
+├── requirements.txt                           # Pinned dependencies
+├── .gitignore                                 # Git exclusions (>100MB weights & raw images)
+│
+├── assignments/                               # Coursework task logs and submissions
+│   └── .gitkeep
+├── notebooks/                                 # Exploratory Data Analysis & experiments
+│   └── 01_eda_and_split.ipynb
+├── code/                                      # Standalone scripts & code exports
+│   └── .gitkeep
+├── resources/                                 # Research papers, literature & references
+│   └── .gitkeep
+├── presentations/                             # Project defense slides & presentations
+│   └── .gitkeep
+├── capstone/                                  # Capstone report & final manuscript assets
+│   └── .gitkeep
+│
+├── data/
+│   ├── dataset_information.txt
+│   └── processed/
+│       ├── train.csv                          # Stratified train split (2,563 scans)
+│       ├── val.csv                            # Stratified validation split (549 scans)
+│       └── test.csv                           # Stratified hold-out test split (550 scans)
+│
+├── src/
+│   ├── __init__.py
+│   ├── split_data.py                          # Cohort partitioning and EDA generator
+│   ├── preprocess.py                          # Ben Graham circular cropping & Gaussian normalization
+│   ├── dataset.py                             # PyTorch Dataset and augmentations
+│   ├── baseline_model.py                      # Custom 3-block scratch CNN architecture
+│   ├── transfer_model.py                      # ResNet-50 transfer learning baseline architecture
+│   ├── train_baseline.py                      # Baseline CNN training loop
+│   ├── train_finetune.py                      # ResNet-50 2-stage unfreezing training loop
+│   ├── innovation_peft.py                     # PEFT Swin+LoRA + 4-cut Ordinal Head architecture
+│   ├── train_peft_full.py                     # PEFT foundation training pipeline
+│   ├── evaluate_peft.py                       # Hold-out test evaluation on models/best_peft_model.pth
+│   ├── statistical_tests.py                   # Paired McNemar's test & 1,000-bootstrap 95% CIs
+│   ├── explainability.py                      # Grad-CAM attention extraction on Swin Transformer
+│   ├── generate_sota_figure.py                # SOTA benchmark bar chart generator
+│   ├── generate_module_c_figures.py           # Factorial DoE ablation chart generator
+│   ├── generate_peft_curves.py                # Optimization loss & validation QWK curves generator
+│   └── audit_consistency.py                   # Zero-leakage and repository consistency assertion engine
+│
+├── models/
+│   ├── model_description.txt                  # Parameter accounts and checkpoint registry
+│   ├── baseline_cnn.pth                       # Saved baseline CNN weights (local)
+│   ├── best_finetuned_model.pth               # Saved ResNet-50 weights (local)
+│   └── best_peft_model.pth                    # Saved pre-trained PEFT weights (tracked via LFS or local)
+│
+├── results/
+│   ├── true_test_metrics.txt                  # Raw evaluation logs
+│   ├── y_true_test.npy                        # Ground-truth test labels (550 scans)
+│   ├── y_pred_test.npy                        # Model test predictions (550 scans)
+│   ├── proposed_confusion_matrix.png          # Clinical test confusion matrix
+│   ├── proposed_confusion_matrix.csv          # Confusion matrix contingency table
+│   ├── per_stage_clinical_sensitivity.csv     # Per-stage recall & precision breakdown
+│   ├── statistical_significance.csv           # McNemar p-value & bootstrap 95% CIs
+│   ├── comparison.csv                         # Literature SOTA benchmark records
+│   ├── ablation.csv                           # Factorial DoE progression matrix (E1..E6)
+│   └── peft_training_history.csv              # GPU convergence loss and QWK logs
+│
+└── figures/
+    ├── sota_comparison_chart.png              # SOTA QWK benchmark bar chart
+    ├── doe_ablation_architecture.png          # Multi-panel DoE ablation chart
+    ├── peft_training_curves.png               # Optimization loss & QWK progression
+    └── xai_gradcam_stages.png                 # 5-stage Grad-CAM pathological attribution grid
+```
+
+---
+
+## 11. Reproduction & Execution Pipeline
+
+To reproduce the empirical results from scratch in an active environment:
+
+```powershell
+# 0. Install dependencies
+pip install -r requirements.txt
+
+# 1. Verify dataset integrity and confirm zero cross-split leakage
+python -m src.audit_splits
+
+# 2. Execute full repository mathematical consistency audit
+python -m src.audit_consistency
+
+# 3. Evaluate the pre-trained PEFT checkpoint on 550 hold-out test images
+python -m src.evaluate_peft
+
+# 4. Compute paired McNemar test and 1,000 bootstrap 95% confidence intervals
+python -m src.statistical_tests
+
+# 5. Generate Grad-CAM explainability heatmaps across clinical stages
+python -m src.explainability
+
+# 6. Render SOTA benchmark chart and Factorial DoE ablation plots
+python -m src.generate_sota_figure
+python -m src.generate_module_c_figures
+python -m src.generate_peft_curves
+
+# 7. (Optional GPU) Re-run complete 15-epoch PEFT foundation training loop
+python -m src.train_peft_full
+```
+
+---
+
+## 12. References & Literature Grounding
+
+1. **APTOS 2019 Blindness Detection:** Asia Pacific Tele-Ophthalmology Society, Kaggle Benchmark, 2019.
+2. **Ben Graham Preprocessing:** Graham, B., "Kaggle Diabetic Retinopathy Detection Competition Winner's Solution," 2015.
+3. **DenseNet-121 Benchmark:** Kassani, S. H. et al., "Diabetic Retinopathy Classification Using a Modified DenseNet-121," *IEEE ICMLA*, 2019.
+4. **EfficientNet-B4 Benchmark:** Tan, M. & Le, Q. V., "EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks," *ICML*, 2019.
+5. **Swin Transformer:** Liu, Z. et al., "Swin Transformer: Hierarchical Vision Transformer using Shifted Windows," *IEEE ICCV*, 2021.
+6. **Low-Rank Adaptation (LoRA):** Hu, E. J. et al., "LoRA: Low-Rank Adaptation of Large Language Models," *ICLR*, 2022.
+7. **RETFound Foundation Model:** Zhou, Y. et al., "A foundation model for generalizable disease detection from retinal images," *Nature*, 622, 156–163, 2023.
