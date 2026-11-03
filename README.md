@@ -146,12 +146,12 @@ Evaluations were performed on the 550 unseen hold-out test images using `models/
 ## 8. Factorial Design of Experiments (DoE) Ablation Study
 
 | Exp ID | Architecture Configuration | Adaptation Method | Trainable Params | VRAM | Test QWK | Macro $F_1$ | Empirical Takeaway |
-| :---: | :--- | :--- | :---: | :---: | :---: | :--- |
-| **E1** | ResNet-50 Baseline | 2-Stage Layer4 Unfreeze | 9.0M | 3.2 GB | 0.8616 | 0.6091 | Severe DR recall bottleneck (13.79%) |
-| **E2** | Swin Transformer Backbone | Linear Head Probe Only | 0.005M | 3.8 GB | 0.8420 | 0.5510 | Underfitting; frozen features lack domain adaptation |
-| **E3** | Swin Transformer Backbone | Full End-to-End Fine-Tune | 88.0M | 14.2 GB | 0.9030 | 0.6120 | Server-grade compute overhead |
-| **E4** | Swin Transformer + LoRA | PEFT ($r=8$) + Flat CE | 0.39M | 4.0 GB | 0.8710 | 0.5640 | Low rank acts as capacity bottleneck |
-| **E5** | Swin Transformer + LoRA | PEFT ($r=16$) + Flat CE | 0.77M | 4.1 GB | 0.8850 | 0.5780 | Optimal adapter rank, but nominal loss causes drag |
+| :---: | :--- | :--- | :---: | :---: | :---: | :--- | :--- |
+| E1 | ResNet-50 Baseline | 2-Stage Layer4 Unfreeze | 9.0M | 3.2 GB | 0.8616 | 0.6091 | Severe DR recall bottleneck (13.79%) |
+| E2 | Swin Transformer Backbone | Linear Head Probe Only | 0.005M | 3.8 GB | 0.8420 | 0.5510 | Underfitting; frozen features lack domain adaptation |
+| E3 | Swin Transformer Backbone | Full End-to-End Fine-Tune | 88.0M | 14.2 GB | 0.9030 | 0.6120 | Server-grade compute overhead |
+| E4 | Swin Transformer + LoRA | PEFT ($r=8$) + Flat CE | 0.39M | 4.0 GB | 0.8710 | 0.5640 | Low rank acts as capacity bottleneck |
+| E5 | Swin Transformer + LoRA | PEFT ($r=16$) + Flat CE | 0.77M | 4.1 GB | 0.8850 | 0.5780 | Optimal adapter rank, but nominal loss causes drag |
 | **E6** | **Proposed PEFT Framework** | **LoRA ($r=16$) + Ordinal Head** | **0.77M** | **4.1 GB** | **0.8998** | **0.5911** | **Resource-efficient; mitigates Stage 3 bottleneck** |
 
 ---
